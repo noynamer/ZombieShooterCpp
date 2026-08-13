@@ -8,12 +8,13 @@
 #include "Camera/CameraComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
-#include "Sound/SoundBase.h"
+//#include "Sound/SoundBase.h"
 #include "Components/ProgressBar.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/TextBlock.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Camera/CameraShakeSourceComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 //------------------------------------------------------------------------------------------------------------
 ASwatCharacter::ASwatCharacter()
@@ -44,6 +45,11 @@ ASwatCharacter::ASwatCharacter()
 
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
+
+	CharacterMovementComponent = CreateDefaultSubobject<UCharacterMovementComponent>(TEXT("MovementComponent"));
+	CharacterMovementComponent->MaxWalkSpeed = 200.0f;
+	CharacterMovementComponent->RotationRate = FRotator(0.0f, 600.0f, 0.0f);
+	CharacterMovementComponent->bOrientRotationToMovement = true;
 }
 //------------------------------------------------------------------------------------------------------------
 //void ASwatCharacter::BeginPlay()
@@ -485,6 +491,18 @@ void ASwatCharacter::OnLineTrace ()
 			ParamsFail
 		);
 	}
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::IaAimingStarted ()
+{
+	bIsAimingMY = true;
+
+	
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::IaAimingCanceledAndCompleted ()
+{
+	bIsAimingMY = false;
 }
 //------------------------------------------------------------------------------------------------------------
 

@@ -69,6 +69,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void OnLineTrace();
 
+	UFUNCTION(BlueprintCallable)
+	void IaAimingStarted();
+
+	UFUNCTION(BlueprintCallable)
+	void IaAimingCanceledAndCompleted();
+
 	FName WeaponSocket = "WeaponSocket";
 
 	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Components")
@@ -76,6 +82,9 @@ public:
 
 	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* CameraComponent;
+
+	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Components")
+	UCharacterMovementComponent* CharacterMovementComponent;
 
 	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Sound")
 	USoundBase* SoundEmptyWeapon;
