@@ -16,6 +16,7 @@
 #include "Camera/CameraShakeSourceComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/WidgetAnimation.h"
+#include "EnhancedInputSubsystems.h"
 
 //------------------------------------------------------------------------------------------------------------
 ASwatCharacter::ASwatCharacter()
@@ -57,8 +58,8 @@ void ASwatCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//SpawnWeapon();
-
+	SpawnWeapon();
+	SetPlayerController();
 	SpawnWidget();
 }
 //------------------------------------------------------------------------------------------------------------
@@ -109,26 +110,45 @@ void ASwatCharacter::WeaponAmmoCounter ()
 	AmmoCharacter = FMath::Clamp(AmmoCharacter, AmmoMin, AmmoMax);
 }
 //------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::SetPlayerController ()
+{
+	APlayerController* PlayerController = Cast<APlayerController>(GetController());
+
+	if (PlayerController)
+	{
+		ULocalPlayer* LocalPlayer = PlayerController->GetLocalPlayer();
+
+		if (LocalPlayer)
+		{
+			UEnhancedInputLocalPlayerSubsystem* Subsystem = 
+				LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>();
+
+			if (Subsystem)
+			{
+				Subsystem->AddMappingContext(IMC_Default, 0);
+			}
+		}
+	}
+}
+//------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::SpawnWeapon ()
 {
 	FTransform Transform = GetMesh()->GetSocketTransform(WeaponSocket, ERelativeTransformSpace::RTS_World);
 
-	FActorSpawnParameters Params;
-	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	FActorSpawnParameters SpawnParams;
 
-	AActor* WeaponActor = GetWorld()->SpawnActor<AActor>(
-		WeaponClass,
-		Transform,
-		Params
+	FAttachmentTransformRules AttachRules (
+		EAttachmentRule::SnapToTarget, 
+		EAttachmentRule::SnapToTarget,
+		EAttachmentRule::SnapToTarget,
+		true
 	);
 
-	if (WeaponActor)
+	WeaponREF = GetWorld()->SpawnActor<AWeapon>(WeaponClass, Transform, SpawnParams);
+
+	if (WeaponREF)
 	{
-		WeaponActor->AttachToComponent(
-			GetMesh(),
-			FAttachmentTransformRules::SnapToTargetNotIncludingScale,
-			WeaponSocket
-		);
+		WeaponREF->AttachToComponent(GetMesh(), AttachRules, WeaponSocket);
 	}
 }
 //------------------------------------------------------------------------------------------------------------

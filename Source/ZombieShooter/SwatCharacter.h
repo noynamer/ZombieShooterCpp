@@ -21,6 +21,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class USoundBase;
 class USoundAttenuation;
+class UInputMappingContext;
 
 UCLASS()
 class ZOMBIESHOOTER_API ASwatCharacter : public ACharacter, public II_Ammo, public II_FirstAid
@@ -38,6 +39,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void WeaponAmmoCounter();
+
+	UFUNCTION(BlueprintCallable)
+	void SetPlayerController();
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnWeapon();
@@ -187,6 +191,9 @@ public:
 
 	UPROPERTY()
 	FTimeline TLAim;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputMappingContext* IMC_Default;
 
 	UPROPERTY(BlueprintReadWrite)
 	UMainWidget* MainWidgetREF;
