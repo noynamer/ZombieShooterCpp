@@ -8,6 +8,7 @@
 
 #include "Components/TimelineComponent.h"
 #include "Curves/CurveFloat.h"
+
 #include "SwatCharacter.generated.h"
 
 class AWeapon;

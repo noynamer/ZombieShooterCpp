@@ -15,6 +15,7 @@
 #include "Camera/PlayerCameraManager.h"
 #include "Camera/CameraShakeSourceComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Animation/WidgetAnimation.h"
 
 //------------------------------------------------------------------------------------------------------------
 ASwatCharacter::ASwatCharacter()
@@ -512,6 +513,8 @@ void ASwatCharacter::IaAimingStarted ()
 	W_CroshairREF->AddToViewport();
 
 	TLAim.Play();
+
+	W_CroshairREF->PlayAnimationForward(W_CroshairREF->AnimCroshair, 1.0f, false);
 }
 //------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::IaAimingCanceledAndCompleted ()

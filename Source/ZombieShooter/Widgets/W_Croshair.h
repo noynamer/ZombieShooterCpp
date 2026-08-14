@@ -13,7 +13,11 @@ class ZOMBIESHOOTER_API UW_Croshair : public UUserWidget
 	
 public:
 
-	UPROPERTY (BlueprintReadOnly, meta = (BindWidget))
+
+	UPROPERTY (BlueprintReadOnly, Category = "UI", meta = (BindWidget))
 	UImage* MainCrosshairImage;
+
+	UPROPERTY (Transient, BlueprintReadOnly, Category = "UI", meta = (BindWidgetAnim))
+	UWidgetAnimation* AnimCroshair;
 
 };
