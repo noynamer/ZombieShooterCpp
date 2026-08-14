@@ -35,31 +35,60 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PostInitializeComponents() override;
+
+	FVector LeftHandSocketPoseCharacter;
+
+	float HealthCharacter = 1.0f;
+
+	bool bIsAimingMY = false;
+
+	int AmmoCharacter = 60;
+	int AmmoMin = 0;
+	int AmmoMax = 60;
+
+private:
+
 	void DelayHitEffect();
-
-	UFUNCTION(BlueprintCallable)
 	void WeaponAmmoCounter();
-
-	UFUNCTION(BlueprintCallable)
 	void SetPlayerController();
-
-	UFUNCTION(BlueprintCallable)
 	void SpawnWeapon();
-
-	UFUNCTION(BlueprintCallable)
 	void SpawnWidget();
-
-	UFUNCTION(BlueprintCallable)
 	void OnCreateMainWidget();
-
-	UFUNCTION(BlueprintCallable)
 	void OnCreateCrosshairWidget();
+	void SoundEmptyWeaponAndFiringMontage();
+	void OnHitEffect();
+	void OnCreateDeathWidget();
+	void OnLineTrace();
+	void TLAimUpdate(float Zoom);
+	void TLAimInitialize();
+
+	UMainWidget* MainWidgetREF;
+	UW_Croshair* W_CroshairREF;
+	AWeapon* WeaponREF;
+	UUserWidget* DeathWidget;
+
+	USpringArmComponent* SpringArmComponent;
+	UCameraComponent* CameraComponent;
+
+	FName WeaponSocket = "WeaponSocket";
+	FName LeftHandSocketPos = "LeftHandSocketPos";
+
+	FTimerHandle DelayPostProcessTimer;
+	FTimerHandle DelayTakeDamageTimer;
+	FTimerHandle DelayOnShootTimer;
+
+	UCurveFloat* AimCurve;
+
+	FTimeline TLAim;
+
+	int GrenadeAmount = 3;
+	int GrenadeMin = 0;
+	int GrenadeMax = 3;
+
+	bool bCanShootMY = false;
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnGrenade();
-
-	UFUNCTION(BlueprintCallable)
-	void SoundEmptyWeaponAndFiringMontage();
 
 	UFUNCTION(BlueprintCallable)
 	void OnOnceShoot();
@@ -68,16 +97,7 @@ public:
 	void OnStopShoot();
 
 	UFUNCTION(BlueprintCallable)
-	void OnHitEffect();
-
-	UFUNCTION(BlueprintCallable)
 	void OnTakeDamage(float Damage);
-
-	UFUNCTION(BlueprintCallable)
-	void OnCreateDeathWidget();
-
-	UFUNCTION(BlueprintCallable)
-	void OnLineTrace();
 
 	UFUNCTION(BlueprintCallable)
 	void IaAimingStarted();
@@ -85,129 +105,57 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void IaAimingCanceledAndCompleted();
 
-	UFUNCTION(BlueprintCallable)
-	void TLAimUpdate(float Zoom);
-
-	UFUNCTION(BlueprintCallable)
-	void TLAimInitialize();
-
-	FName WeaponSocket = "WeaponSocket";
-
-	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Components")
-	USpringArmComponent* SpringArmComponent;
-
-	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Components")
-	UCameraComponent* CameraComponent;
-
-	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	UPROPERTY (EditAnywhere, Category = "Sound")
 	USoundBase* SoundEmptyWeapon;
 
-	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	UPROPERTY (EditAnywhere, Category = "Sound")
 	USoundBase* SoundFireWeapon;
 
-	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	UPROPERTY (EditAnywhere, Category = "Sound")
 	USoundBase* SoundHitMaterial;
 
-	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Sound")
+	UPROPERTY (EditAnywhere, Category = "Sound")
 	USoundBase* SoundHitZombie;
 
-	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Attenuation")
+	UPROPERTY (EditAnywhere, Category = "Attenuation")
 	USoundAttenuation* SA_HitSound;
 
-	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Animation")
+	UPROPERTY (EditAnywhere, Category = "Animation")
 	UAnimMontage* FiringMontage;
 
-	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category = "ParticleSystem")
+	UPROPERTY (EditAnywhere, Category = "ParticleSystem")
 	UParticleSystem* P_ImpactBlood;
 
-	UPROPERTY (VisibleAnywhere, BlueprintReadWrite, Category = "ParticleSystem")
 	UParticleSystem* SelectedEmitter = nullptr;
 
-	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category = "ParticleSystem")
+	UPROPERTY (EditAnywhere, Category = "ParticleSystem")
 	UParticleSystem* P_ImpactPlaster;
 
-	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category = "ParticleSystem")
+	UPROPERTY (EditAnywhere, Category = "ParticleSystem")
 	UParticleSystem* P_ImpactBrick;
 
-	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category = "ParticleSystem")
+	UPROPERTY (EditAnywhere, Category = "ParticleSystem")
 	UParticleSystem* P_ImpactConcrete;
 
-	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category = "PostProcess")
+	UPROPERTY (EditAnywhere, Category = "PostProcess")
 	FPostProcessSettings HitPostProcessSettings;
 
-	UPROPERTY(BlueprintReadWrite)
-	UCurveFloat* AimCurve;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, Category = "SpawnClass")
 	TSubclassOf<AActor> WeaponClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, Category = "SpawnClass")
 	TSubclassOf<AActor> GrenadeClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, Category = "SpawnClass")
 	TSubclassOf<UUserWidget> CrosshairWidgetClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, Category = "SpawnClass")
 	TSubclassOf<UMainWidget> MainWidgetClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, Category = "SpawnClass")
 	TSubclassOf<UUserWidget> DeathWidgetClass;
-
-	UPROPERTY(BlueprintReadWrite)
-	UUserWidget* DeathWidget;
-
-	UPROPERTY (BlueprintReadWrite)
-	float HealthCharacter = 1.0f;
-
-	UPROPERTY (BlueprintReadWrite)
-	FVector LeftHandSocketPoseCharacter;
-
-	UPROPERTY (BlueprintReadWrite)
-	FName LeftHandSocketPos = "LeftHandSocketPos";
-
-	UPROPERTY (EditAnywhere, BlueprintReadWrite)
-	int GrenadeAmount = 3;
-
-	UPROPERTY (BlueprintReadWrite)
-	int GrenadeMin = 0;
-
-	UPROPERTY (BlueprintReadWrite)
-	int GrenadeMax = 3;
-
-	UPROPERTY (EditAnywhere, BlueprintReadWrite)
-	int AmmoCharacter = 60;
-
-	UPROPERTY (BlueprintReadWrite)
-	int AmmoMin = 0;
-
-	UPROPERTY (BlueprintReadWrite)
-	int AmmoMax = 60;
-	
-	UPROPERTY(BlueprintReadWrite)
-	bool bCanShootMY = false;
-
-	UPROPERTY(BlueprintReadWrite)
-	bool bIsAimingMY = false;
-
-	UPROPERTY()
-	FTimeline TLAim;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputMappingContext* IMC_Default;
-
-	UPROPERTY(BlueprintReadWrite)
-	UMainWidget* MainWidgetREF;
-
-	UPROPERTY(BlueprintReadWrite)
-	UW_Croshair* W_CroshairREF;
-
-	UPROPERTY(BlueprintReadWrite)
-	AWeapon* WeaponREF;
-
-private:	
-
-	FTimerHandle DelayPostProcessTimer;
-	FTimerHandle DelayTakeDamageTimer;
-	FTimerHandle DelayOnShootTimer;
 
 };
