@@ -2,8 +2,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+
 #include "Interfaces/I_Ammo.h"
 #include "Interfaces/I_FirstAid.h"
+
+#include "Components/TimelineComponent.h"
+#include "Curves/CurveFloat.h"
 #include "SwatCharacter.generated.h"
 
 class AWeapon;
@@ -28,6 +32,7 @@ public:
 	//virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	virtual void PostInitializeComponents() override;
 	void DelayHitEffect();
 
 	UFUNCTION(BlueprintCallable)
@@ -75,6 +80,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void IaAimingCanceledAndCompleted();
 
+	UFUNCTION(BlueprintCallable)
+	void TLAimUpdate(float Zoom);
+
+	UFUNCTION(BlueprintCallable)
+	void TLAimInitialize();
+
 	FName WeaponSocket = "WeaponSocket";
 
 	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Components")
@@ -82,9 +93,6 @@ public:
 
 	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* CameraComponent;
-
-	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Components")
-	UCharacterMovementComponent* CharacterMovementComponent;
 
 	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Sound")
 	USoundBase* SoundEmptyWeapon;
@@ -121,6 +129,9 @@ public:
 
 	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category = "PostProcess")
 	FPostProcessSettings HitPostProcessSettings;
+
+	UPROPERTY(BlueprintReadWrite)
+	UCurveFloat* AimCurve;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<AActor> WeaponClass;
@@ -178,6 +189,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsAimingMY = false;
+
+	UPROPERTY()
+	FTimeline TLAim;
 
 	UPROPERTY(BlueprintReadWrite)
 	UMainWidget* MainWidgetREF;

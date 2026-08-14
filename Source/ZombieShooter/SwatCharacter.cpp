@@ -1,6 +1,7 @@
 #include "SwatCharacter.h"
 #include "Weapon.h"
 #include "Widgets/MainWidget.h"
+#include "Widgets/W_Croshair.h"
 
 #include "Components/ArrowComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -8,7 +9,6 @@
 #include "Camera/CameraComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
-//#include "Sound/SoundBase.h"
 #include "Components/ProgressBar.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/TextBlock.h"
@@ -46,10 +46,10 @@ ASwatCharacter::ASwatCharacter()
 	CameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	CameraComponent->SetupAttachment(SpringArmComponent);
 
-	CharacterMovementComponent = CreateDefaultSubobject<UCharacterMovementComponent>(TEXT("MovementComponent"));
-	CharacterMovementComponent->MaxWalkSpeed = 200.0f;
-	CharacterMovementComponent->RotationRate = FRotator(0.0f, 600.0f, 0.0f);
-	CharacterMovementComponent->bOrientRotationToMovement = true;
+	UCharacterMovementComponent* DefaultMovementComponent = GetCharacterMovement();
+	DefaultMovementComponent->MaxWalkSpeed = 200.0f;
+	DefaultMovementComponent->RotationRate = FRotator(0.0f, 600.0f, 0.0f);
+	DefaultMovementComponent->bOrientRotationToMovement = true;
 }
 //------------------------------------------------------------------------------------------------------------
 //void ASwatCharacter::BeginPlay()
@@ -77,6 +77,8 @@ void ASwatCharacter::Tick(float DeltaTime)
 	FText AmmoText = FText::AsNumber(AmmoCharacter);
 
 	MainWidgetREF->AmmoTextBlock->SetText(AmmoText);
+
+	TLAim.TickTimeline(DeltaTime);
 }
 //------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -85,11 +87,17 @@ void ASwatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 }
 //------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::PostInitializeComponents ()
+{
+	Super::PostInitializeComponents();
+
+	TLAimInitialize();
+}
+//------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::DelayHitEffect ()
 {
 	CameraComponent->PostProcessSettings = HitPostProcessSettings;
 	CameraComponent->PostProcessBlendWeight = 0.0f;
-
 }
 //------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::WeaponAmmoCounter ()
@@ -497,12 +505,60 @@ void ASwatCharacter::IaAimingStarted ()
 {
 	bIsAimingMY = true;
 
-	
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	bUseControllerRotationYaw = true;
+
+	W_CroshairREF->AddToViewport();
+
+	TLAim.Play();
 }
 //------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::IaAimingCanceledAndCompleted ()
 {
 	bIsAimingMY = false;
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	bUseControllerRotationYaw = false;
+
+	W_CroshairREF->RemoveFromParent();
+
+	TLAim.Reverse();
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::TLAimUpdate (float Zoom)
+{
+	FVector CurrentLocation = CameraComponent->GetRelativeLocation();
+
+	CurrentLocation.X = FMath::Lerp(0.0f, 50.0f, Zoom);
+
+	CameraComponent->SetRelativeLocation(FVector(
+		CurrentLocation.X,
+		CurrentLocation.Y,
+		CurrentLocation.Z
+	));
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::TLAimInitialize ()
+{
+	AimCurve = NewObject<UCurveFloat>(this);
+	FRichCurve& FloatCurve = AimCurve->FloatCurve;
+
+	FloatCurve.AddKey(0.0f, 0.0f);
+	FloatCurve.AddKey(1.0f, 1.0f);
+
+	for (FRichCurveKey& Key : FloatCurve.Keys)
+	{
+		Key.InterpMode = RCIM_Linear;
+	}
+
+	FOnTimelineFloat TimeLineUpdate;
+	TimeLineUpdate.BindUFunction(this, FName("TLAimUpdate"));
+
+	TLAim.AddInterpFloat(AimCurve, TimeLineUpdate);
+	TLAim.SetTimelineLength(1.0f);
+	TLAim.SetLooping(false);
 }
 //------------------------------------------------------------------------------------------------------------
 
