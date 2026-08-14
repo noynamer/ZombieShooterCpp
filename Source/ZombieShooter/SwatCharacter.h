@@ -30,7 +30,7 @@ class ZOMBIESHOOTER_API ASwatCharacter : public ACharacter, public II_Ammo, publ
 public:
 
 	ASwatCharacter();
-	//virtual void BeginPlay() override;
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PostInitializeComponents() override;
@@ -46,10 +46,10 @@ public:
 	void SpawnWidget();
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnMainWidget();
+	void OnCreateMainWidget();
 
 	UFUNCTION(BlueprintCallable)
-	void SpawnCroshairWidget();
+	void OnCreateCrosshairWidget();
 
 	UFUNCTION(BlueprintCallable)
 	void SpawnGrenade();
@@ -144,16 +144,10 @@ public:
 	TSubclassOf<UUserWidget> CrosshairWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<UUserWidget> MainWidgetClass;
+	TSubclassOf<UMainWidget> MainWidgetClass;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TSubclassOf<UUserWidget> DeathWidgetClass;
-
-	UPROPERTY(BlueprintReadWrite)
-	UUserWidget* CrosshairWidget;
-
-	UPROPERTY(BlueprintReadWrite)
-	UUserWidget* MainWidget;
 
 	UPROPERTY(BlueprintReadWrite)
 	UUserWidget* DeathWidget;

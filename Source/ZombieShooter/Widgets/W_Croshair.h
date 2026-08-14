@@ -13,7 +13,6 @@ class ZOMBIESHOOTER_API UW_Croshair : public UUserWidget
 	
 public:
 
-
 	UPROPERTY (BlueprintReadOnly, Category = "UI", meta = (BindWidget))
 	UImage* MainCrosshairImage;
 

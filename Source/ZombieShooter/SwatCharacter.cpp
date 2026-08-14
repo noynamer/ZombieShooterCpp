@@ -53,12 +53,14 @@ ASwatCharacter::ASwatCharacter()
 	DefaultMovementComponent->bOrientRotationToMovement = true;
 }
 //------------------------------------------------------------------------------------------------------------
-//void ASwatCharacter::BeginPlay()
-//{
-	//Super::BeginPlay();
+void ASwatCharacter::BeginPlay()
+{
+	Super::BeginPlay();
 
 	//SpawnWeapon();
-//}
+
+	SpawnWidget();
+}
 //------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::Tick(float DeltaTime)
 {
@@ -132,20 +134,13 @@ void ASwatCharacter::SpawnWeapon ()
 //------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::SpawnWidget ()
 {
-	SpawnCroshairWidget();
-	SpawnMainWidget();
+	OnCreateCrosshairWidget();
+	OnCreateMainWidget();
 }
 //------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::SpawnMainWidget ()
+void ASwatCharacter::OnCreateMainWidget ()
 {
-	//MainWidgetREF = CreateWidget<UMainWidget>(GetWorld());
-
-	//if (MainWidgetREF)
-	//{
-	//	MainWidgetREF->AddToViewport();
-	//}
-
-	if (MainWidgetREF)
+	if (MainWidgetClass)
 	{
 		MainWidgetREF = CreateWidget<UMainWidget>(GetWorld(), MainWidgetClass);
 
@@ -154,27 +149,13 @@ void ASwatCharacter::SpawnMainWidget ()
 			MainWidgetREF->AddToViewport();
 		}
 	}
-	//if (MainWidget)
-	//{
-	//	MainWidget = CreateWidget<UUserWidget>(GetWorld(), MainWidgetClass);
-
-	//	if (MainWidget)
-	//	{
-	//		MainWidget->AddToViewport();
-	//	}
-	//}
 }
 //------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::SpawnCroshairWidget ()
+void ASwatCharacter::OnCreateCrosshairWidget ()
 {
 	if (CrosshairWidgetClass)
 	{
-		CrosshairWidget = CreateWidget<UUserWidget>(GetWorld(), CrosshairWidgetClass);
-
-		if (CrosshairWidget)
-		{
-			CrosshairWidget->AddToViewport();
-		}
+		W_CroshairREF = CreateWidget<UW_Croshair>(GetWorld(), CrosshairWidgetClass);
 	}
 }
 //------------------------------------------------------------------------------------------------------------
