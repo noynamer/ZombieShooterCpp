@@ -8,6 +8,7 @@
 
 #include "Components/TimelineComponent.h"
 #include "Curves/CurveFloat.h"
+#include "InputActionValue.h"
 
 #include "SwatCharacter.generated.h"
 
@@ -22,6 +23,7 @@ class UCameraComponent;
 class USoundBase;
 class USoundAttenuation;
 class UInputMappingContext;
+class UInputAction;
 
 UCLASS()
 class ZOMBIESHOOTER_API ASwatCharacter : public ACharacter, public II_Ammo, public II_FirstAid
@@ -35,6 +37,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PostInitializeComponents() override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
+		class AController* EventInstigator, AActor* DamageCauser) override;
 
 	FVector LeftHandSocketPoseCharacter;
 
@@ -47,6 +51,13 @@ public:
 	int AmmoMax = 60;
 
 private:
+
+	void Move(const FInputActionValue& Value);
+	void Look(const FInputActionValue& Value);
+
+	void SprintTriggered();
+	void SprintCanceled();
+	void SprintCompleted();
 
 	void DelayHitEffect();
 	void WeaponAmmoCounter();
@@ -105,57 +116,78 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void IaAimingCanceledAndCompleted();
 
-	UPROPERTY (EditAnywhere, Category = "Sound")
+	UPROPERTY (EditDefaultsOnly, Category = "Sound")
 	USoundBase* SoundEmptyWeapon;
 
-	UPROPERTY (EditAnywhere, Category = "Sound")
+	UPROPERTY (EditDefaultsOnly, Category = "Sound")
 	USoundBase* SoundFireWeapon;
 
-	UPROPERTY (EditAnywhere, Category = "Sound")
+	UPROPERTY (EditDefaultsOnly, Category = "Sound")
 	USoundBase* SoundHitMaterial;
 
-	UPROPERTY (EditAnywhere, Category = "Sound")
+	UPROPERTY (EditDefaultsOnly, Category = "Sound")
 	USoundBase* SoundHitZombie;
 
-	UPROPERTY (EditAnywhere, Category = "Attenuation")
+	UPROPERTY (EditDefaultsOnly, Category = "Attenuation")
 	USoundAttenuation* SA_HitSound;
 
-	UPROPERTY (EditAnywhere, Category = "Animation")
+	UPROPERTY (EditDefaultsOnly, Category = "Animation")
 	UAnimMontage* FiringMontage;
 
-	UPROPERTY (EditAnywhere, Category = "ParticleSystem")
+	UPROPERTY (EditDefaultsOnly, Category = "ParticleSystem")
 	UParticleSystem* P_ImpactBlood;
 
 	UParticleSystem* SelectedEmitter = nullptr;
 
-	UPROPERTY (EditAnywhere, Category = "ParticleSystem")
+	UPROPERTY (EditDefaultsOnly, Category = "ParticleSystem")
 	UParticleSystem* P_ImpactPlaster;
 
-	UPROPERTY (EditAnywhere, Category = "ParticleSystem")
+	UPROPERTY (EditDefaultsOnly, Category = "ParticleSystem")
 	UParticleSystem* P_ImpactBrick;
 
-	UPROPERTY (EditAnywhere, Category = "ParticleSystem")
+	UPROPERTY (EditDefaultsOnly, Category = "ParticleSystem")
 	UParticleSystem* P_ImpactConcrete;
 
-	UPROPERTY (EditAnywhere, Category = "PostProcess")
+	UPROPERTY (EditDefaultsOnly, Category = "PostProcess")
 	FPostProcessSettings HitPostProcessSettings;
 
-	UPROPERTY(EditAnywhere, Category = "SpawnClass")
+	UPROPERTY(EditDefaultsOnly, Category = "SpawnClass")
 	TSubclassOf<AActor> WeaponClass;
 
-	UPROPERTY(EditAnywhere, Category = "SpawnClass")
+	UPROPERTY(EditDefaultsOnly, Category = "SpawnClass")
 	TSubclassOf<AActor> GrenadeClass;
 
-	UPROPERTY(EditAnywhere, Category = "SpawnClass")
+	UPROPERTY(EditDefaultsOnly, Category = "SpawnClass")
 	TSubclassOf<UUserWidget> CrosshairWidgetClass;
 
-	UPROPERTY(EditAnywhere, Category = "SpawnClass")
+	UPROPERTY(EditDefaultsOnly, Category = "SpawnClass")
 	TSubclassOf<UMainWidget> MainWidgetClass;
 
-	UPROPERTY(EditAnywhere, Category = "SpawnClass")
+	UPROPERTY(EditDefaultsOnly, Category = "SpawnClass")
 	TSubclassOf<UUserWidget> DeathWidgetClass;
 
-	UPROPERTY(EditAnywhere, Category = "Input")
-	UInputMappingContext* IMC_Default;
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputMappingContext> IMC_Default;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_Move;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_Look;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_Jump;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_Sprint;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_Aiming;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_Shoot;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input")
+	TObjectPtr<UInputAction> IA_ThrowGrenade;
 
 };

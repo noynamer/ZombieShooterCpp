@@ -9,6 +9,7 @@
 #include "Camera/CameraComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Components/ProgressBar.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/TextBlock.h"
@@ -17,6 +18,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/WidgetAnimation.h"
 #include "EnhancedInputSubsystems.h"
+#include "EnhancedInputComponent.h"
 
 //------------------------------------------------------------------------------------------------------------
 ASwatCharacter::ASwatCharacter()
@@ -89,6 +91,27 @@ void ASwatCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	UEnhancedInputComponent* EnhancedInputComponent = 
+		CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
+
+	EnhancedInputComponent->BindAction(IA_Move, ETriggerEvent::Triggered, this, &ThisClass::Move);
+	EnhancedInputComponent->BindAction(IA_Look, ETriggerEvent::Triggered, this, &ThisClass::Look);
+
+	EnhancedInputComponent->BindAction(IA_Jump, ETriggerEvent::Started, this, &ThisClass::Jump);
+	EnhancedInputComponent->BindAction(IA_Jump, ETriggerEvent::Completed, this, &ThisClass::StopJumping);
+
+	EnhancedInputComponent->BindAction(IA_Sprint, ETriggerEvent::Triggered, this, &ThisClass::SprintTriggered);
+	EnhancedInputComponent->BindAction(IA_Sprint, ETriggerEvent::Canceled, this, &ThisClass::SprintCanceled);
+	EnhancedInputComponent->BindAction(IA_Sprint, ETriggerEvent::Completed, this, &ThisClass::SprintCompleted);
+
+	EnhancedInputComponent->BindAction(IA_Aiming, ETriggerEvent::Started, this, &ThisClass::IaAimingStarted);
+	EnhancedInputComponent->BindAction(IA_Aiming, ETriggerEvent::Canceled, this, &ThisClass::IaAimingCanceledAndCompleted);
+	EnhancedInputComponent->BindAction(IA_Aiming, ETriggerEvent::Completed, this, &ThisClass::IaAimingCanceledAndCompleted);
+
+	EnhancedInputComponent->BindAction(IA_Shoot, ETriggerEvent::Triggered, this, &ThisClass::OnOnceShoot);
+	EnhancedInputComponent->BindAction(IA_Shoot, ETriggerEvent::Completed, this, &ThisClass::OnStopShoot);
+
+	EnhancedInputComponent->BindAction(IA_ThrowGrenade, ETriggerEvent::Started, this, &ThisClass::SpawnGrenade);
 }
 //------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::PostInitializeComponents ()
@@ -96,6 +119,13 @@ void ASwatCharacter::PostInitializeComponents ()
 	Super::PostInitializeComponents();
 
 	TLAimInitialize();
+}
+//------------------------------------------------------------------------------------------------------------
+float ASwatCharacter::TakeDamage (float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	OnTakeDamage(DamageAmount);
+
+	return 0.0f;
 }
 //------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::DelayHitEffect ()
@@ -565,4 +595,45 @@ void ASwatCharacter::TLAimInitialize ()
 	TLAim.SetLooping(false);
 }
 //------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::Move (const FInputActionValue& Value)
+{
+	FVector2D Input = Value.Get<FVector2D>();
 
+	FRotator ControlRotationFirst = GetControlRotation();
+	ControlRotationFirst.Pitch = 0.0f;
+
+	FVector WorldDirectionFirst = UKismetMathLibrary::GetRightVector(ControlRotationFirst);
+
+	AddMovementInput(WorldDirectionFirst, Input.X);
+
+	FRotator ControlRotationSecond = GetControlRotation();
+	ControlRotationSecond.Roll = 0.0f;
+	ControlRotationSecond.Pitch = 0.0f;
+
+	FVector WorldDirectionSecond = UKismetMathLibrary::GetForwardVector(ControlRotationSecond);
+
+	AddMovementInput(WorldDirectionSecond, Input.Y);
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::Look (const FInputActionValue& Value)
+{
+	FVector2D Input = Value.Get<FVector2D>();
+
+	AddControllerYawInput(Input.X);
+	AddControllerPitchInput(Input.Y);
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::SprintTriggered ()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::SprintCanceled ()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::SprintCompleted ()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+}

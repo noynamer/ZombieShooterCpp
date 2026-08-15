@@ -27,7 +27,6 @@ public:
 	
 	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
 		class AController* EventInstigator, AActor* DamageCauser) override;
-
 	virtual float TakeRadialDamage(float DamageAmount, struct FRadialDamageEvent const& RadialDamageEvent, 
 		class AController* EventInstigator, AActor* DamageCauser);
 	void OnTakeDamage(float Damage);
