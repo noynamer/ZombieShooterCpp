@@ -40,10 +40,10 @@ public:
 	void OnMoveFinished(FAIRequestID RequestID, EPathFollowingResult::Type Result);
 	FOnZombieHealthChanged OnHealthChanged;
 
-	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY (EditAnywhere, Category = "Components")
 	USphereComponent* HitSphere;
 
-	UPROPERTY (VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY (VisibleAnywhere, Category = "Components")
 	UWidgetComponent* WidgetZombieHealth;
 
 	UPROPERTY (EditAnywhere, BlueprintReadOnly)

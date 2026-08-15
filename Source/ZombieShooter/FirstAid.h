@@ -21,22 +21,22 @@ public:
 	void NotifyActorBeginOverlap(AActor* OtherActor) override;
 	void AddHealth_Implementation() override;
 
-	UPROPERTY (VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY (VisibleAnywhere, Category = "Components")
 	USceneComponent* DefaultSceneRootT;
 
-	UPROPERTY (VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY (VisibleAnywhere, Category = "Components")
 	UBoxComponent* Box;
 
-	UPROPERTY (VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY (VisibleAnywhere, Category = "Components")
 	USpotLightComponent* SpotLight;
 
-	UPROPERTY (EditAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY (EditDefaultsOnly, Category = "Components")
 	UStaticMeshComponent* StaticMesh;
 
-	UPROPERTY (VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UPROPERTY (VisibleAnywhere, Category = "Components")
 	URotatingMovementComponent* RotatingMovement;
 
-	UPROPERTY (EditAnywhere, BlueprintReadWrite, Category = "Effects")
+	UPROPERTY (EditDefaultsOnly, Category = "Effects")
 	USoundBase* PickupSound;
 
 protected:

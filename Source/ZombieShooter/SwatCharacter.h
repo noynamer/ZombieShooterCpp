@@ -37,8 +37,6 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	virtual void PostInitializeComponents() override;
-	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
-		class AController* EventInstigator, AActor* DamageCauser) override;
 
 	FVector LeftHandSocketPoseCharacter;
 
@@ -52,12 +50,24 @@ public:
 
 private:
 
+//-----------------------------Damage--------------------------------------------------------------------------
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, 
+		class AController* EventInstigator, AActor* DamageCauser) override;
+	void OnTakeDamage(float Damage);
+	void OnHitEffect();
+
+	void SpawnGrenade();
+	void OnOnceShoot();
+	void OnStopShoot();
+
+//-----------------------------Input--------------------------------------------------------------------------
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
-
 	void SprintTriggered();
 	void SprintCanceled();
 	void SprintCompleted();
+	void IaAimingStarted();
+	void IaAimingCanceledAndCompleted();
 
 	void DelayHitEffect();
 	void WeaponAmmoCounter();
@@ -67,7 +77,6 @@ private:
 	void OnCreateMainWidget();
 	void OnCreateCrosshairWidget();
 	void SoundEmptyWeaponAndFiringMontage();
-	void OnHitEffect();
 	void OnCreateDeathWidget();
 	void OnLineTrace();
 	void TLAimUpdate(float Zoom);
@@ -97,24 +106,6 @@ private:
 	int GrenadeMax = 3;
 
 	bool bCanShootMY = false;
-
-	UFUNCTION(BlueprintCallable)
-	void SpawnGrenade();
-
-	UFUNCTION(BlueprintCallable)
-	void OnOnceShoot();
-
-	UFUNCTION(BlueprintCallable)
-	void OnStopShoot();
-
-	UFUNCTION(BlueprintCallable)
-	void OnTakeDamage(float Damage);
-
-	UFUNCTION(BlueprintCallable)
-	void IaAimingStarted();
-
-	UFUNCTION(BlueprintCallable)
-	void IaAimingCanceledAndCompleted();
 
 	UPROPERTY (EditDefaultsOnly, Category = "Sound")
 	USoundBase* SoundEmptyWeapon;

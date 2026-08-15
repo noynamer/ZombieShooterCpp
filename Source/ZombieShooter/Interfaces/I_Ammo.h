@@ -16,7 +16,7 @@ class ZOMBIESHOOTER_API II_Ammo
 
 public:
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent)
 	void AddAmmo();
 
 };

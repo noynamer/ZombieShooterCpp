@@ -128,6 +128,169 @@ float ASwatCharacter::TakeDamage (float DamageAmount, FDamageEvent const& Damage
 	return 0.0f;
 }
 //------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::OnTakeDamage (float Damage)
+{
+	OnHitEffect();
+
+	HealthCharacter = FMath::Clamp(HealthCharacter - Damage, 0.0f, 1.0f);
+
+	MainWidgetREF->HealthCharacterProgressBar->SetPercent(HealthCharacter);
+
+	if (HealthCharacter <= 0.0f)
+	{
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		GetMesh()->SetSimulatePhysics(true);
+		UWidgetLayoutLibrary::RemoveAllWidgets(GetWorld());
+
+		GetWorld()->GetTimerManager().SetTimer(
+			DelayTakeDamageTimer,
+			this,
+			&ASwatCharacter::OnCreateDeathWidget,
+			0.2f,
+			false
+		);
+	}
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::OnHitEffect ()
+{
+	CameraComponent->PostProcessSettings = HitPostProcessSettings;
+	CameraComponent->PostProcessBlendWeight = 1.0f;
+
+	GetWorld()->GetTimerManager().SetTimer(
+		DelayPostProcessTimer,
+		this,
+		&ASwatCharacter::DelayHitEffect,
+		0.3f,
+		false
+	);
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::SpawnGrenade ()
+{
+	if (GrenadeAmount > 0)
+	{
+		GrenadeAmount -= 1;
+		GrenadeAmount = FMath::Clamp(GrenadeAmount, GrenadeMin, GrenadeMax);
+
+		WeaponREF = Cast<AWeapon>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeapon::StaticClass()));
+
+		FTransform Transform = WeaponREF->ArrowComponent->GetSocketTransform(NAME_None, ERelativeTransformSpace::RTS_World);
+
+		FActorSpawnParameters Params;
+		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+
+		AActor* NewActor = GetWorld()->SpawnActor<AActor>(
+			GrenadeClass,
+			Transform,
+			Params
+		);
+	}
+
+	FText GrenadeText = FText::AsNumber(GrenadeAmount);
+
+	MainWidgetREF->GrenadeCounterText->SetText(GrenadeText);
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::OnOnceShoot ()
+{
+	if (!GetWorld()->GetTimerManager().IsTimerActive(DelayOnShootTimer))
+	{
+		//SoundEmptyWeaponAndFiringMontage();
+
+		GetWorld ()->GetTimerManager ().SetTimer (
+			DelayOnShootTimer,
+			this,
+			&ASwatCharacter::SoundEmptyWeaponAndFiringMontage,
+			0.05f,
+			false
+		);
+	}
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::OnStopShoot ()
+{
+	GetWorld()->GetTimerManager().ClearTimer(DelayOnShootTimer);
+
+	if (FiringMontage)
+	{
+		StopAnimMontage(FiringMontage);
+	}
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::Move (const FInputActionValue& Value)
+{
+	FVector2D Input = Value.Get<FVector2D>();
+
+	FRotator ControlRotationFirst = GetControlRotation();
+	ControlRotationFirst.Pitch = 0.0f;
+
+	FVector WorldDirectionFirst = UKismetMathLibrary::GetRightVector(ControlRotationFirst);
+
+	AddMovementInput(WorldDirectionFirst, Input.X);
+
+	FRotator ControlRotationSecond = GetControlRotation();
+	ControlRotationSecond.Roll = 0.0f;
+	ControlRotationSecond.Pitch = 0.0f;
+
+	FVector WorldDirectionSecond = UKismetMathLibrary::GetForwardVector(ControlRotationSecond);
+
+	AddMovementInput(WorldDirectionSecond, Input.Y);
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::Look (const FInputActionValue& Value)
+{
+	FVector2D Input = Value.Get<FVector2D>();
+
+	AddControllerYawInput(Input.X);
+	AddControllerPitchInput(Input.Y);
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::SprintTriggered ()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::SprintCanceled ()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::SprintCompleted ()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::IaAimingStarted ()
+{
+	bIsAimingMY = true;
+
+	GetCharacterMovement()->bOrientRotationToMovement = false;
+
+	bUseControllerRotationYaw = true;
+
+	W_CroshairREF->AddToViewport();
+
+	TLAim.Play();
+
+	W_CroshairREF->PlayAnimationForward(W_CroshairREF->AnimCroshair, 1.0f, false);
+}
+//------------------------------------------------------------------------------------------------------------
+void ASwatCharacter::IaAimingCanceledAndCompleted ()
+{
+	bIsAimingMY = false;
+
+	GetCharacterMovement()->bOrientRotationToMovement = true;
+
+	bUseControllerRotationYaw = false;
+
+	W_CroshairREF->RemoveFromParent();
+
+	TLAim.Reverse();
+}
+//------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::DelayHitEffect ()
 {
 	CameraComponent->PostProcessSettings = HitPostProcessSettings;
@@ -209,32 +372,6 @@ void ASwatCharacter::OnCreateCrosshairWidget ()
 	}
 }
 //------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::SpawnGrenade ()
-{
-	if (GrenadeAmount > 0)
-	{
-		GrenadeAmount -= 1;
-		GrenadeAmount = FMath::Clamp(GrenadeAmount, GrenadeMin, GrenadeMax);
-
-		WeaponREF = Cast<AWeapon>(UGameplayStatics::GetActorOfClass(GetWorld(), AWeapon::StaticClass()));
-
-		FTransform Transform = WeaponREF->ArrowComponent->GetSocketTransform(NAME_None, ERelativeTransformSpace::RTS_World);
-
-		FActorSpawnParameters Params;
-		Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-
-		AActor* NewActor = GetWorld()->SpawnActor<AActor>(
-			GrenadeClass,
-			Transform,
-			Params
-		);
-	}
-
-	FText GrenadeText = FText::AsNumber(GrenadeAmount);
-
-	MainWidgetREF->GrenadeCounterText->SetText(GrenadeText);
-}
-//------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::SoundEmptyWeaponAndFiringMontage ()
 {	
 	if (bIsAimingMY)
@@ -283,72 +420,6 @@ void ASwatCharacter::SoundEmptyWeaponAndFiringMontage ()
 				return;
 			}
 		}
-	}
-}
-//------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::OnOnceShoot ()
-{
-	if (!GetWorld()->GetTimerManager().IsTimerActive(DelayOnShootTimer))
-	{
-		//SoundEmptyWeaponAndFiringMontage();
-
-		GetWorld ()->GetTimerManager ().SetTimer (
-			DelayOnShootTimer,
-			this,
-			&ASwatCharacter::SoundEmptyWeaponAndFiringMontage,
-			0.05f,
-			false
-		);
-	}
-}
-//------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::OnStopShoot ()
-{
-	GetWorld()->GetTimerManager().ClearTimer(DelayOnShootTimer);
-
-	if (FiringMontage)
-	{
-		StopAnimMontage(FiringMontage);
-	}
-}
-//------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::OnHitEffect ()
-{
-	CameraComponent->PostProcessSettings = HitPostProcessSettings;
-	CameraComponent->PostProcessBlendWeight = 1.0f;
-
-	GetWorld()->GetTimerManager().SetTimer(
-		DelayPostProcessTimer,
-		this,
-		&ASwatCharacter::DelayHitEffect,
-		0.3f,
-		false
-	);
-}
-//------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::OnTakeDamage (float Damage)
-{
-	OnHitEffect();
-
-	HealthCharacter = FMath::Clamp(HealthCharacter - Damage, 0.0f, 1.0f);
-
-	MainWidgetREF->HealthCharacterProgressBar->SetPercent(HealthCharacter);
-
-	if (HealthCharacter <= 0.0f)
-	{
-		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-
-		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		GetMesh()->SetSimulatePhysics(true);
-		UWidgetLayoutLibrary::RemoveAllWidgets(GetWorld());
-
-		GetWorld()->GetTimerManager().SetTimer(
-			DelayTakeDamageTimer,
-			this,
-			&ASwatCharacter::OnCreateDeathWidget,
-			0.2f,
-			false
-		);
 	}
 }
 //------------------------------------------------------------------------------------------------------------
@@ -533,34 +604,6 @@ void ASwatCharacter::OnLineTrace ()
 	}
 }
 //------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::IaAimingStarted ()
-{
-	bIsAimingMY = true;
-
-	GetCharacterMovement()->bOrientRotationToMovement = false;
-
-	bUseControllerRotationYaw = true;
-
-	W_CroshairREF->AddToViewport();
-
-	TLAim.Play();
-
-	W_CroshairREF->PlayAnimationForward(W_CroshairREF->AnimCroshair, 1.0f, false);
-}
-//------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::IaAimingCanceledAndCompleted ()
-{
-	bIsAimingMY = false;
-
-	GetCharacterMovement()->bOrientRotationToMovement = true;
-
-	bUseControllerRotationYaw = false;
-
-	W_CroshairREF->RemoveFromParent();
-
-	TLAim.Reverse();
-}
-//------------------------------------------------------------------------------------------------------------
 void ASwatCharacter::TLAimUpdate (float Zoom)
 {
 	FVector CurrentLocation = CameraComponent->GetRelativeLocation();
@@ -595,45 +638,3 @@ void ASwatCharacter::TLAimInitialize ()
 	TLAim.SetLooping(false);
 }
 //------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::Move (const FInputActionValue& Value)
-{
-	FVector2D Input = Value.Get<FVector2D>();
-
-	FRotator ControlRotationFirst = GetControlRotation();
-	ControlRotationFirst.Pitch = 0.0f;
-
-	FVector WorldDirectionFirst = UKismetMathLibrary::GetRightVector(ControlRotationFirst);
-
-	AddMovementInput(WorldDirectionFirst, Input.X);
-
-	FRotator ControlRotationSecond = GetControlRotation();
-	ControlRotationSecond.Roll = 0.0f;
-	ControlRotationSecond.Pitch = 0.0f;
-
-	FVector WorldDirectionSecond = UKismetMathLibrary::GetForwardVector(ControlRotationSecond);
-
-	AddMovementInput(WorldDirectionSecond, Input.Y);
-}
-//------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::Look (const FInputActionValue& Value)
-{
-	FVector2D Input = Value.Get<FVector2D>();
-
-	AddControllerYawInput(Input.X);
-	AddControllerPitchInput(Input.Y);
-}
-//------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::SprintTriggered ()
-{
-	GetCharacterMovement()->MaxWalkSpeed = 400.0f;
-}
-//------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::SprintCanceled ()
-{
-	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
-}
-//------------------------------------------------------------------------------------------------------------
-void ASwatCharacter::SprintCompleted ()
-{
-	GetCharacterMovement()->MaxWalkSpeed = 200.0f;
-}

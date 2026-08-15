@@ -16,7 +16,7 @@ class ZOMBIESHOOTER_API II_FirstAid
 
 public:
 
-	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
+	UFUNCTION(BlueprintNativeEvent)
 	void AddHealth();
 
 };
