@@ -4,11 +4,63 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
+// struct FMainCharacterAnimProxy
+//------------------------------------------------------------------------------------------------------------
+void FMainCharacterAnimProxy::Initialize (UAnimInstance* Instance)
+{
+	Super::Initialize(Instance);
+
+	UA_MainCharacter* Anim = Cast<UA_MainCharacter>(Instance);
+
+	if (Anim->BS_AimingAsset)
+	{
+		BS_AimingNode.SetBlendSpace(Anim->BS_AimingAsset);
+		BS_AimingNode.SetLoop(true);
+	}
+}
+//------------------------------------------------------------------------------------------------------------
+void FMainCharacterAnimProxy::PreUpdate (UAnimInstance* Instance, float DeltaSeconds)
+{
+	Super::PreUpdate(Instance, DeltaSeconds);
+
+	UA_MainCharacter* Anim = Cast<UA_MainCharacter>(Instance);
+
+	BS_AimingNode.SetPosition(FVector(
+		Anim->CharacterDirection,
+		Anim->CharacterSpeed,
+		0.0f
+	));
+}
+//------------------------------------------------------------------------------------------------------------
+void FMainCharacterAnimProxy::UpdateAnimationNode (const FAnimationUpdateContext& Context)
+{
+}
+//------------------------------------------------------------------------------------------------------------
+bool FMainCharacterAnimProxy::Evaluate (FPoseContext& Output)
+{
+	return false;
+}
+//------------------------------------------------------------------------------------------------------------
+FAnimNode_Base* FMainCharacterAnimProxy::GetCustomRootNode ()
+{
+	return nullptr;
+}
+//------------------------------------------------------------------------------------------------------------
+
+
+
+
+// class UA_MainCharacter
 //------------------------------------------------------------------------------------------------------------
 void UA_MainCharacter::NativeInitializeAnimation ()
 {
 	Super::NativeInitializeAnimation();
 
+	//if (BS_AimingAsset)
+	//{
+	//	BS_AimingNode.SetBlendSpace(BS_AimingAsset);
+	//	BS_AimingNode.SetLoop(true);
+	//}
 
 }
 //------------------------------------------------------------------------------------------------------------
@@ -16,7 +68,18 @@ void UA_MainCharacter::NativeUpdateAnimation (float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
+	//FVector BSPosition = FVector(CharacterDirection, CharacterSpeed, 0.0f);
 
+	//BS_AimingNode.SetPosition(BSPosition);
+}
+//------------------------------------------------------------------------------------------------------------
+FAnimInstanceProxy* UA_MainCharacter::CreateAnimInstanceProxy ()
+{
+	return new FMainCharacterAnimProxy(this);
+}
+//------------------------------------------------------------------------------------------------------------
+void UA_MainCharacter::DestroyAnimInstanceProxy (FAnimInstanceProxy* InProxy)
+{
 }
 //------------------------------------------------------------------------------------------------------------
 void UA_MainCharacter::OnNativeUpdateAnimation ()
