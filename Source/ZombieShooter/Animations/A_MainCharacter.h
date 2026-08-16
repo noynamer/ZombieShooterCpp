@@ -29,7 +29,7 @@ struct FMainCharacterAnimProxy : public FAnimInstanceProxy
 
 	FMainCharacterAnimProxy() {}
 	FMainCharacterAnimProxy(UAnimInstance* Instance)
-		:	FAnimInstanceProxy(Instance){}
+		:	FAnimInstanceProxy(Instance) {}
 
 	virtual void Initialize(UAnimInstance* Instance) override;
 	virtual void PreUpdate(UAnimInstance* Instance, float DeltaSeconds) override;
@@ -39,7 +39,7 @@ struct FMainCharacterAnimProxy : public FAnimInstanceProxy
 
 	FAnimNode_BlendSpacePlayer BS_AimingNode;
 	FAnimNode_SequencePlayer RifleAimingIdle;
-	FAnimNode_SaveCachedPose MainPosesCached;
+	FAnimNode_SaveCachedPose MainPosesCache;
 	FAnimNode_UseCachedPose MainPoses;
 	FAnimNode_LayeredBoneBlend AimingLayer;
 	FAnimNode_BlendListByBool AimBlend;

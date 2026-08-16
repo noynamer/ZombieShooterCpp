@@ -3,6 +3,7 @@
 
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
+#include "AnimNodes/AnimNode_BlendListByBool.h"
 
 // struct FMainCharacterAnimProxy
 //------------------------------------------------------------------------------------------------------------
@@ -17,6 +18,9 @@ void FMainCharacterAnimProxy::Initialize (UAnimInstance* Instance)
 		BS_AimingNode.SetBlendSpace(Anim->BS_AimingAsset);
 		BS_AimingNode.SetLoop(true);
 	}
+
+	MainPosesCache.CachePoseName = TEXT("MainPoses");
+	MainPoses.LinkToCachingNode = &MainPosesCache;
 }
 //------------------------------------------------------------------------------------------------------------
 void FMainCharacterAnimProxy::PreUpdate (UAnimInstance* Instance, float DeltaSeconds)
@@ -30,6 +34,17 @@ void FMainCharacterAnimProxy::PreUpdate (UAnimInstance* Instance, float DeltaSec
 		Anim->CharacterSpeed,
 		0.0f
 	));
+
+	AimBlend.bActiveValue = Anim->bAnimIsAiming;
+
+	ModifyAimBone.Rotation = FRotator(
+		Anim->CharacterAnimOffset,
+		0.0f,
+		0.0f
+	);
+
+	LeftHandIK1.EffectorLocation = Anim->LeftHandSocketPoseAnim;
+	LeftHandIK2.EffectorLocation = Anim->LeftHandSocketPoseAnim;
 }
 //------------------------------------------------------------------------------------------------------------
 void FMainCharacterAnimProxy::UpdateAnimationNode (const FAnimationUpdateContext& Context)
@@ -75,7 +90,8 @@ void UA_MainCharacter::NativeUpdateAnimation (float DeltaSeconds)
 //------------------------------------------------------------------------------------------------------------
 FAnimInstanceProxy* UA_MainCharacter::CreateAnimInstanceProxy ()
 {
-	return new FMainCharacterAnimProxy(this);
+	return &AnimProxy;
+	//return new FMainCharacterAnimProxy(this);
 }
 //------------------------------------------------------------------------------------------------------------
 void UA_MainCharacter::DestroyAnimInstanceProxy (FAnimInstanceProxy* InProxy)
