@@ -12,8 +12,28 @@ UCLASS()
 class ZOMBIESHOOTER_API UW_MainMenu : public UUserWidget
 {
 	GENERATED_BODY()
-	
+
 public:
+
+	virtual void NativeConstruct() override;
+
+	UFUNCTION()
+	void OnClickedButtonBeginPlay();
+
+	UFUNCTION()
+	void OnHoveredButtonBeginPlay();
+
+	UFUNCTION()
+	void OnUnhoveredButtonBeginPlay();
+
+	UFUNCTION()
+	void OnClickedButtonExit();
+
+	UFUNCTION()
+	void OnHoveredButtonExit();
+
+	UFUNCTION()
+	void OnUnhoveredButtonExit();
 
 	UPROPERTY (BlueprintReadOnly, Category = "UI", meta = (BindWidget))
 	UTextBlock* ZombieShooterTextBlock;
@@ -35,5 +55,25 @@ public:
 
 	UPROPERTY (BlueprintReadOnly, Category = "UI", meta = (BindWidget))
 	UTextBlock* ExitTextBlock;
+
+	UPROPERTY(EditDefaultsOnly, Category = "SpawnClass")
+	TSubclassOf<AActor> StartCameraClass;
+
+	UPROPERTY(BlueprintReadWrite)
+	AActor* StartCameraActor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "SpawnClass")
+	TSubclassOf<AActor> MainCameraClass;
+
+	UPROPERTY(BlueprintReadWrite)
+	AActor* MainCameraActor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "SpawnClass")
+	TSubclassOf<AActor> ExitCameraClass;
+
+	UPROPERTY(BlueprintReadWrite)
+	AActor* ExitCameraActor;
+
+	FName DemoDayName = "Demo_Day";
 
 };
