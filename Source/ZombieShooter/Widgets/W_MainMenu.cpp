@@ -2,7 +2,6 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
-#include "Camera/CameraActor.h"
 
 //------------------------------------------------------------------------------------------------------------
 void UW_MainMenu::NativeConstruct ()
@@ -11,25 +10,40 @@ void UW_MainMenu::NativeConstruct ()
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 
-	//FInputModeUIOnly InputModeData;
-	//InputModeData.SetWidgetToFocus(TakeWidget());
-	//InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	FInputModeUIOnly InputModeData;
+	InputModeData.SetWidgetToFocus(TakeWidget());
+	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	//PlayerController->bShowMouseCursor = true;
-	//PlayerController->SetInputMode(InputModeData);
+	PlayerController->bShowMouseCursor = true;
+	PlayerController->SetInputMode(InputModeData);
+
+	if (StartCameraClass)
+	{
+		StartCameraActor = UGameplayStatics::GetActorOfClass(GetWorld(), StartCameraClass);
+	}
+
+	if (MainCameraClass)
+	{
+		MainCameraActor = UGameplayStatics::GetActorOfClass(GetWorld(), MainCameraClass);
+	}
+
+	if (ExitCameraClass)
+	{
+		ExitCameraActor = UGameplayStatics::GetActorOfClass(GetWorld(), ExitCameraClass);
+	}
 
 	if (BeginPlayButton)
 	{
-		//BeginPlayButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedButtonBeginPlay);
-		//BeginPlayButton->OnHovered.AddDynamic(this, &ThisClass::OnHoveredButtonBeginPlay);
-		//BeginPlayButton->OnUnhovered.AddDynamic(this, &ThisClass::OnUnhoveredButtonBeginPlay);
+		BeginPlayButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedButtonBeginPlay);
+		BeginPlayButton->OnHovered.AddDynamic(this, &ThisClass::OnHoveredButtonBeginPlay);
+		BeginPlayButton->OnUnhovered.AddDynamic(this, &ThisClass::OnUnhoveredButtonBeginPlay);
 	}
 
 	if (ExitButton)
 	{
-		//ExitButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedButtonExit);
-		//ExitButton->OnHovered.AddDynamic(this, &ThisClass::OnHoveredButtonExit);
-		//ExitButton->OnUnhovered.AddDynamic(this, &ThisClass::OnUnhoveredButtonExit);
+		ExitButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedButtonExit);
+		ExitButton->OnHovered.AddDynamic(this, &ThisClass::OnHoveredButtonExit);
+		ExitButton->OnUnhovered.AddDynamic(this, &ThisClass::OnUnhoveredButtonExit);
 	}
 }
 //------------------------------------------------------------------------------------------------------------
@@ -44,22 +58,6 @@ void UW_MainMenu::OnClickedButtonBeginPlay ()
 	FInputModeGameOnly InputMode;
 
 	PlayerController->SetInputMode(InputMode);
-
-	if (StartCameraClass)
-	{
-		StartCameraActor = UGameplayStatics::GetActorOfClass(GetWorld(), StartCameraClass);
-	}
-
-	if (MainCameraClass)
-	{
-		MainCameraActor = UGameplayStatics::GetActorOfClass(GetWorld(), MainCameraClass);
-		//MainCameraActor = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), MainCameraClass));
-	}
-
-	if (ExitCameraClass)
-	{
-		ExitCameraActor = UGameplayStatics::GetActorOfClass(GetWorld(), ExitCameraClass);
-	}
 }
 //------------------------------------------------------------------------------------------------------------
 void UW_MainMenu::OnHoveredButtonBeginPlay ()
