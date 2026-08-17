@@ -106,6 +106,7 @@ private:
 	int GrenadeMax = 3;
 
 	bool bCanShootMY = false;
+	bool bPlayedEmptySound = false;
 
 	UPROPERTY (EditDefaultsOnly, Category = "Sound")
 	USoundBase* SoundEmptyWeapon;

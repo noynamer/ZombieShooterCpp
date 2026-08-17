@@ -198,8 +198,6 @@ void ASwatCharacter::OnOnceShoot ()
 {
 	if (!GetWorld()->GetTimerManager().IsTimerActive(DelayOnShootTimer))
 	{
-		//SoundEmptyWeaponAndFiringMontage();
-
 		GetWorld ()->GetTimerManager ().SetTimer (
 			DelayOnShootTimer,
 			this,
@@ -213,6 +211,8 @@ void ASwatCharacter::OnOnceShoot ()
 void ASwatCharacter::OnStopShoot ()
 {
 	GetWorld()->GetTimerManager().ClearTimer(DelayOnShootTimer);
+
+	bPlayedEmptySound = false;
 
 	if (FiringMontage)
 	{
@@ -407,7 +407,7 @@ void ASwatCharacter::SoundEmptyWeaponAndFiringMontage ()
 		}
 		else 
 		{
-			if (SoundEmptyWeapon)
+			if (SoundEmptyWeapon && !bPlayedEmptySound)
 			{
 				float PitchSound = FMath::FRandRange (0.8f, 1.1f);
 
@@ -417,7 +417,8 @@ void ASwatCharacter::SoundEmptyWeaponAndFiringMontage ()
 					1.0f,
 					PitchSound
 				);
-				return;
+
+				bPlayedEmptySound = true;
 			}
 		}
 	}

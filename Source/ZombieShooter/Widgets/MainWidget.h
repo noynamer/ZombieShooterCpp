@@ -51,7 +51,7 @@ public:
 	UUserWidget* WinWidget;
 
 	UPROPERTY(BlueprintReadWrite)
-	float TimerLevel = 50.0f;
+	float TimerLevel = 180.0f;
 
 	UPROPERTY(BlueprintReadOnly)
 	ASwatCharacter* SwatCharacterREF;
