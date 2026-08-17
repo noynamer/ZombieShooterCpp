@@ -2,6 +2,7 @@
 
 #include "Kismet/GameplayStatics.h"
 #include "Components/Button.h"
+#include "Camera/CameraActor.h"
 
 //------------------------------------------------------------------------------------------------------------
 void UW_MainMenu::NativeConstruct ()
@@ -10,23 +11,23 @@ void UW_MainMenu::NativeConstruct ()
 
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 
-	FInputModeUIOnly InputModeData;
-	InputModeData.SetWidgetToFocus(TakeWidget());
-	InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
+	//FInputModeUIOnly InputModeData;
+	//InputModeData.SetWidgetToFocus(TakeWidget());
+	//InputModeData.SetLockMouseToViewportBehavior(EMouseLockMode::DoNotLock);
 
-	PlayerController->bShowMouseCursor = true;
-	PlayerController->SetInputMode(InputModeData);
+	//PlayerController->bShowMouseCursor = true;
+	//PlayerController->SetInputMode(InputModeData);
 
 	if (BeginPlayButton)
 	{
-		BeginPlayButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedButtonBeginPlay);
+		//BeginPlayButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedButtonBeginPlay);
 		//BeginPlayButton->OnHovered.AddDynamic(this, &ThisClass::OnHoveredButtonBeginPlay);
 		//BeginPlayButton->OnUnhovered.AddDynamic(this, &ThisClass::OnUnhoveredButtonBeginPlay);
 	}
 
 	if (ExitButton)
 	{
-		ExitButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedButtonExit);
+		//ExitButton->OnClicked.AddDynamic(this, &ThisClass::OnClickedButtonExit);
 		//ExitButton->OnHovered.AddDynamic(this, &ThisClass::OnHoveredButtonExit);
 		//ExitButton->OnUnhovered.AddDynamic(this, &ThisClass::OnUnhoveredButtonExit);
 	}
@@ -52,6 +53,7 @@ void UW_MainMenu::OnClickedButtonBeginPlay ()
 	if (MainCameraClass)
 	{
 		MainCameraActor = UGameplayStatics::GetActorOfClass(GetWorld(), MainCameraClass);
+		//MainCameraActor = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(GetWorld(), MainCameraClass));
 	}
 
 	if (ExitCameraClass)

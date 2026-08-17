@@ -67,6 +67,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	AActor* MainCameraActor;
+	//ACameraActor* MainCameraActor;
 
 	UPROPERTY(EditDefaultsOnly, Category = "SpawnClass")
 	TSubclassOf<AActor> ExitCameraClass;
