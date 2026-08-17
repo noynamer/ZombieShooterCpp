@@ -16,7 +16,6 @@ public:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditDefaultsOnly)
-	//UPROPERTY(EditInstanceOnly)
 	AActor* MainCamera;
 
 	UPROPERTY (EditDefaultsOnly, Category = "Spawn Class")

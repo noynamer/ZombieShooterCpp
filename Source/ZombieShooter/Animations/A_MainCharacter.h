@@ -16,12 +16,6 @@ public:
 	virtual void NativeInitializeAnimation() override;
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
-	UFUNCTION(BlueprintCallable)
-	void OnNativeUpdateAnimation();
-
-	UFUNCTION(BlueprintCallable)
-	void OnNativeInitializeAnimation();
-
 	UPROPERTY (BlueprintReadWrite)
 	FVector LeftHandSocketPoseAnim;
 

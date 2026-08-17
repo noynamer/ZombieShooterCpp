@@ -9,18 +9,13 @@ void UA_MainCharacter::NativeInitializeAnimation ()
 {
 	Super::NativeInitializeAnimation();
 
-
+	SwatCharacterREF = Cast<ASwatCharacter>(TryGetPawnOwner());
 }
 //------------------------------------------------------------------------------------------------------------
 void UA_MainCharacter::NativeUpdateAnimation (float DeltaSeconds)
 {
 	Super::NativeUpdateAnimation(DeltaSeconds);
 
-
-}
-//------------------------------------------------------------------------------------------------------------
-void UA_MainCharacter::OnNativeUpdateAnimation ()
-{
 	if (!TryGetPawnOwner()) return;
 
 	CharacterSpeed = TryGetPawnOwner()->GetVelocity().Size();
@@ -28,7 +23,7 @@ void UA_MainCharacter::OnNativeUpdateAnimation ()
 	if (IsValid(SwatCharacterREF))
 	{
 		LeftHandSocketPoseAnim = SwatCharacterREF->LeftHandSocketPoseCharacter;
-	
+
 		FVector Velocity = SwatCharacterREF->GetVelocity();
 		FRotator BaseRotation = SwatCharacterREF->GetActorRotation();
 
@@ -54,10 +49,5 @@ void UA_MainCharacter::OnNativeUpdateAnimation ()
 	{
 		bAnimIsAiming = SwatCharacterREF->bIsAimingMY;
 	}
-}
-//------------------------------------------------------------------------------------------------------------
-void UA_MainCharacter::OnNativeInitializeAnimation ()
-{
-	SwatCharacterREF = Cast<ASwatCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 }
 //------------------------------------------------------------------------------------------------------------
