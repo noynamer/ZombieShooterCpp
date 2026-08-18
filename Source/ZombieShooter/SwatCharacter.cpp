@@ -83,6 +83,7 @@ void ASwatCharacter::Tick(float DeltaTime)
 	FText AmmoText = FText::AsNumber(AmmoCharacter);
 
 	MainWidgetREF->AmmoTextBlock->SetText(AmmoText);
+	MainWidgetREF->HealthCharacterProgressBar->SetPercent(HealthCharacter);
 
 	TLAim.TickTimeline(DeltaTime);
 }
