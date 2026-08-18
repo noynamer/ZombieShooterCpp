@@ -1,5 +1,3 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
 using UnrealBuildTool;
 
 public class ZombieShooter : ModuleRules
@@ -8,7 +6,17 @@ public class ZombieShooter : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "Niagara", "UMG", "NavigationSystem", "AIModule", "EnhancedInput" });
+		PublicDependencyModuleNames.AddRange(new string[] { 
+			"Core", 
+			"CoreUObject", 
+			"Engine", 
+			"InputCore", 
+			"Niagara", 
+			"UMG", 
+			"NavigationSystem", 
+			"AIModule", 
+			"EnhancedInput" 
+		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
