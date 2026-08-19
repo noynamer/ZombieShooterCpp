@@ -7,11 +7,8 @@ ASpawner::ASpawner()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	DefaultSceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("DefaultSceneRoot"));
-	RootComponent = DefaultSceneRoot;
-
 	Box = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
-	Box->SetupAttachment(RootComponent);
+	RootComponent = Box;
 }
 //------------------------------------------------------------------------------------------------------------
 void ASpawner::Tick(float DeltaTime)
@@ -36,7 +33,7 @@ void ASpawner::SpawnerAmmo()
 			this,
 			&ASpawner::SpawnActor,
 			TimeBetweenSpawn,
-			Looping
+			true
 		);
 	}
 }

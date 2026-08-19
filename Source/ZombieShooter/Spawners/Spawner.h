@@ -15,7 +15,8 @@ public:
 
 	ASpawner();
 	virtual void Tick(float DeltaTime) override;
-	
+	virtual void BeginPlay() override;
+
 	UFUNCTION(BlueprintCallable)
 	void SpawnerAmmo();
 
@@ -26,9 +27,6 @@ public:
 	float TimeBetweenSpawn = 30.0f;
 
 	UPROPERTY (VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	USceneComponent* DefaultSceneRoot;
-
-	UPROPERTY (VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UBoxComponent* Box;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -36,12 +34,4 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	FTimerHandle TimeSpawn;
-
-protected:
-
-	virtual void BeginPlay() override;
-
-private:
-
-	bool Looping = true;
 };
