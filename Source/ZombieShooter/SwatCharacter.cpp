@@ -33,8 +33,6 @@ ASwatCharacter::ASwatCharacter()
 	DefaultCapsule->CanCharacterStepUpOn = ECanBeCharacterBase::ECB_No;
 	DefaultCapsule->bDynamicObstacle = true;
 
-	UArrowComponent* DefaultArrow = GetArrowComponent();
-
 	USkeletalMeshComponent* DefaultMesh = GetMesh();
 	DefaultMesh->SetupAttachment(RootComponent);
 	DefaultMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -97.0f));

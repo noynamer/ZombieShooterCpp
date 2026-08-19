@@ -27,8 +27,6 @@ AZombie::AZombie()
 	DefaultCapsule->bDynamicObstacle = true;
 	DefaultCapsule->SetCanEverAffectNavigation(false);
 
-	UArrowComponent* DefaultArrow = GetArrowComponent();
-
 	USkeletalMeshComponent* DefaultMesh = GetMesh();
 	DefaultMesh->SetupAttachment(RootComponent);
 	DefaultMesh->SetRelativeLocation(FVector(0.0f, 0.0f, -66.401313f));

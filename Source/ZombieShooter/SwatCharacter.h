@@ -82,8 +82,7 @@ private:
 	void TLAimUpdate(float Zoom);
 	void TLAimInitialize();
 
-	UMainWidget* MainWidgetREF;
-	UW_Croshair* W_CroshairREF;
+	UMainWidget* MainWidgetREF;	
 	AWeapon* WeaponREF;
 	UUserWidget* DeathWidget;
 
@@ -97,8 +96,6 @@ private:
 	FTimerHandle DelayTakeDamageTimer;
 	FTimerHandle DelayOnShootTimer;
 
-	UCurveFloat* AimCurve;
-
 	FTimeline TLAim;
 
 	int GrenadeAmount = 3;
@@ -107,6 +104,12 @@ private:
 
 	bool bCanShootMY = false;
 	bool bPlayedEmptySound = false;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UCurveFloat> AimCurve;
+
+	UPROPERTY(Transient)
+	TObjectPtr<UW_Croshair> W_CroshairREF = nullptr;
 
 	UPROPERTY (EditDefaultsOnly, Category = "Sound")
 	USoundBase* SoundEmptyWeapon;
