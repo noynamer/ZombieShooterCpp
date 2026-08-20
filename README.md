@@ -17,6 +17,12 @@ the gameplay logic using Unreal Engine C++ API.
 - Niagara visual effects
 - Communication between gameplay systems using C++ Interfaces and Delegates
 
+## Controls
+
+W / A / S / D - Move
+Shift - Sprint
+G - Throw grenade
+
 ## Technologies
 
 - C++
