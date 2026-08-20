@@ -52,3 +52,4 @@ UI widgets are implemented using UMG with gameplay logic written in C++.
 
 Alive
 [Gameplay](Docs/Video/Alive Widget.mp4)
+https://github.com/user-attachments/assets/8eb8afd1-1c30-4f6a-be88-7109a4566876
