@@ -19,9 +19,9 @@ the gameplay logic using Unreal Engine C++ API.
 
 ## Controls
 
-W / A / S / D - Move
-Shift - Sprint
-G - Throw grenade
+- W / A / S / D - Move
+- Shift - Sprint
+- G - Throw grenade
 
 ## Technologies
 
