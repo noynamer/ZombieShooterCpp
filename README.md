@@ -46,9 +46,11 @@ UI widgets are implemented using UMG with gameplay logic written in C++.
 
 ## Gameplay
 
-![Gameplay](Docs/Gif/Zombie_Shoot.gif)
+Gameplay Demo
+https://github.com/user-attachments/assets/ffd1e7c7-9586-4e5a-8dc7-eb043c4a4e55
 
-[▶ Full Gameplay Video](Docs/Video/Gameplay_Compressed.mp4)
+Full Gameplay
+https://github.com/user-attachments/assets/c0d37c76-84aa-4f1b-9377-ee782c3f94d6
 
-Alive
-[Gameplay](Docs/Video/Alive Widget.mp4)
+Victory Screen
+https://github.com/user-attachments/assets/8eb8afd1-1c30-4f6a-be88-7109a4566876
