@@ -46,9 +46,9 @@ UI widgets are implemented using UMG with gameplay logic written in C++.
 
 ## Gameplay
 
-[![Gameplay](Docs/Gif/Zombie Shoot.gif)]
+![Gameplay](Docs/Gif/Zombie_Shoot.gif)
 
-![▶ Full Gameplay Video](Docs/Video/Gameplay_Compressed.mp4)
+[▶ Full Gameplay Video](Docs/Video/Gameplay_Compressed.mp4)
 
 Alive
-![Gameplay](Docs/Video/Alive Widget.mp4)
+[Gameplay](Docs/Video/Alive Widget.mp4)
