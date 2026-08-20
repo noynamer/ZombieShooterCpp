@@ -39,10 +39,17 @@ the gameplay logic using Unreal Engine C++ API.
 
 ## Screenshots
 
-![Niagara VFX - weapon and hit effects](Docs/Images/First.png)
+Niagara VFX - weapon and hit effects
+(Docs/Images/First.png)
 
 UI widgets are implemented using UMG with gameplay logic written in C++.
 
 ## Gameplay
 
-![Gameplay](Docs//Zombie Shoot.gif)
+(Docs/Zombie Shoot.gif)
+
+▶ Full Gameplay Video
+(Docs/Video/Gameplay.mp4)
+
+Alive
+(Docs/Video/Alive Widget.mp4)
