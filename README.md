@@ -37,3 +37,12 @@ the gameplay logic using Unreal Engine C++ API.
 - AI implemented using Unreal Engine AI and Navigation systems
 - UI logic implemented in C++
 
+## Screenshots
+
+![Niagara VFX - weapon and hit effects](Images/First.png)
+
+UI widgets are implemented using UMG with gameplay logic written in C++.
+
+## Gameplay
+
+![Gameplay](Gif/Zombie Shoot.gif)
