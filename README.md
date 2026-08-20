@@ -44,6 +44,9 @@ Niagara VFX - weapon and hit effects
 
 UI widgets are implemented using UMG with gameplay logic written in C++.
 
+AI and Navigation systems
+![AI and Navigation systems](Docs/Images/AI_Controller.png)
+
 ## Gameplay
 
 Gameplay Demo
